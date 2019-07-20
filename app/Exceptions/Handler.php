@@ -8,12 +8,14 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 class Handler extends ExceptionHandler
 {
     /**
+     * Laravel 内置了屏蔽指定异常写日志的解决方案
      * A list of the exception types that are not reported.
      *
      * @var array
      */
     protected $dontReport = [
         //
+        InvalidRequestException::class,
     ];
 
     /**

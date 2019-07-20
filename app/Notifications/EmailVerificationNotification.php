@@ -43,6 +43,7 @@ class EmailVerificationNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+        //$notifiable 相当与App\Models\User();
         // 使用 Laravel 内置的 Str 类生成随机字符串的函数，参数就是要生成的字符串长度
         $token = Str::random(16);
 
@@ -52,7 +53,7 @@ class EmailVerificationNotification extends Notification implements ShouldQueue
         return (new MailMessage)
                     ->greeting($notifiable->name.'您好：')
                     ->subject('注册成功，请验证您的邮箱')
-                    ->line('请点击下方链接验证您的邮箱')
+                    ->line('请点击下方链接验证您的邮箱,,有效时间30分钟')
                     ->action('验证',$url);
     }
 

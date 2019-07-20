@@ -245,6 +245,59 @@ class EventServiceProvider extends ServiceProvider
 
 ~~~
 
+###异常
+>异常指的是在程序运行过程中发生的异常事件，通常是由外部问题所导致的
+
++ 生成异常类
+~~~
+//新创建的异常文件保存在 app/Exceptions/ 目录下：app/Exceptions/InvalidRequestException.php
+
+php artisan make:exception InvalidRequestException
+~~~
+自己定义异常类
+~~~php
+<?php
+
+namespace App\Exceptions;
+
+use Exception;
+use Illuminate\Http\Request;
+
+
+class InvalidRequestException extends Exception
+{
+    //
+    public function __construct(string $message= "",int $code = 400)
+    {
+        parent::__construct($message,$code);
+
+    }
+
+    //Laravel 5.5 之后支持在异常类中定义 render() 方法，该异常被触发时系统会调用 render() 方法来输出
+    public function render( Request $request)
+    {
+        if ($request->expectsJson()) {
+
+            // json() 方法第二个参数就是 Http 返回码
+            return response()->json(['msg'=>$this->message],$this->code);
+        }
+        return view('pages.error', ['msg' => $this->message]);
+    }
+}
+
+~~~
+当异常触发时 Laravel 默认会把异常的信息和调用栈打印到日志里;
+而此类异常并不是因为我们系统本身的问题导致的，不会影响我们系统的运行，
+如果大量此类日志打印到日志文件里反而会影响我们去分析真正有问题的异常，因此需要屏蔽这个行为。
+Laravel 内置了屏蔽指定异常写日志的解决方案：
+app/Exceptions/Handler.php
+~~~
+protected $dontReport = [
+        InvalidRequestException::class,
+    ];
+~~~
+当一个异常被触发时，Laravel 会去检查这个异常的类型是否在 $dontReport 属性中定义了，
+如果有则不会打印到日志文件中
 
 ##用户模块
 ##商品模块
