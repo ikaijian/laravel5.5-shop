@@ -346,7 +346,7 @@ config/app.php
 ~~~
 'faker_locale' => 'zh_CN', // 新增一个配置项
 ~~~
-####laravel5.5中文语言包
+###laravel5.5中文语言包
 
 校验提示文中文配置
 ~~~
@@ -366,7 +366,98 @@ $app->register(Overtrue\LaravelLang\TranslationServiceProvider::class);
 ~~~
 
 
+###策略类（Policy）
+>通过授权策略类（Policy）来实现权限控制
 
+检查权限
+~~~
+//新创建的 Policy 文件位于 app/Policies/UserAddressPolicy.php 下。
+php artisan make:policy UserAddressPolicy
+~~~
+在 UserAddressPolicy 类中新建一个 own() 方法：
+~~~php
+<?php
+
+namespace App\Policies;
+
+use App\Models\User;
+use App\Models\UserAddress;
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class UserAddressPolicy
+{
+    use HandlesAuthorization;
+
+
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * 检查权限
+     * 当 own() 方法返回 true 时代表当前登录用户可以修改对应的地址
+     * @param User $user
+     * @param UserAddress $address
+     * @return bool
+     */
+    public function own(User $user,UserAddress $address)
+    {
+        return $address->user_id == $user->id;
+
+    }
+}
+
+~~~
+注册授权策略,在app/Providers/AuthServiceProvider.php
+~~~php
+
+<?php
+
+namespace App\Providers;
+
+use App\Models\UserAddress;
+use App\Policies\UserAddressPolicy;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+
+class AuthServiceProvider extends ServiceProvider
+{
+    protected $policies = [
+        'App\Model' => 'App\Policies\ModelPolicy',
+        //地址管理授权策略类
+        UserAddress::class => UserAddressPolicy::class
+    ];
+
+    /**
+     * Register any authentication / authorization services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->registerPolicies();
+
+        //
+    }
+}
+
+~~~
+使用：在控制器中添加校验权限
+~~~
+public function edit(UserAddress $user_address)
+    {
+        $this->authorize('own', $user_address);
+
+        return view('user_addresses.create_and_edit', ['address' => $user_address]);
+    }
+~~~
+代码解析：
+
+authorize('own', $user_address) 方法会获取第二个参数 $user_address 的类名: App\Models\UserAddress，
+然后在 AuthServiceProvider 类的 $policies 属性中寻找对应的策略，
+在这里就是 App\Policies\UserAddressPolicy，找到之后会实例化这个策略类，
+再调用名为 own() 方法，如果 own() 方法返回 false 则会抛出一个未授权的异常
 
 ##用户模块
 ##商品模块
