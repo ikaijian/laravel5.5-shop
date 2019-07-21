@@ -30,6 +30,6 @@ Route::group(['middleware'=>'auth'],function (){
 
     //验证邮箱中间件email_verified
     Route::group(['middleware' => 'email_verified'], function() {
-
+        Route::get('user_addresses', 'UserAddressesController@index')->name('user_addresses.index');
     });
 });

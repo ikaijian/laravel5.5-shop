@@ -299,6 +299,53 @@ protected $dontReport = [
 当一个异常被触发时，Laravel 会去检查这个异常的类型是否在 $dontReport 属性中定义了，
 如果有则不会打印到日志文件中
 
+
+###收货地址列表
+- 创建模型
+~~~
+//-fm 参数代表同时生成 factory 工厂文件和 migration 数据库迁移文件
+
+php artisan make:model Models/UserAddress -fm
+~~~
+迁移文件创建表字段
+~~~
+public function up()
+    {
+        Schema::create('user_addresses', function (Blueprint $table) {
+            $table->increments('id')->comment('自增长 ID');
+            $table->unsignedInteger('user_id')->comment('该地址所属的用户');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('province')->comment('省');
+            $table->string('city')->comment('市');
+            $table->string('district')->comment('区');
+            $table->string('address')->comment('具体地址');
+            $table->unsignedInteger('zip')->comment('邮编');
+            $table->string('contact_name')->comment('联系人姓名');
+            $table->string('contact_phone')->comment('联系人电话');
+            $table->dateTime('last_used_at')->nullable()->comment('最后一次使用时间');
+            $table->timestamps();
+        });
+    }
+
+~~~
+
+执行迁移
+~~~
+php artisan migrate
+~~~
+- 工厂文件
+>make:model 的 -f 参数自动生成了工厂文件，但是由于加了前缀 Models，
+所以生成的工厂文件名字是 database/factories/ModelsUserAddressFactory需要把这个文件重命名一下UserAddressFactory.php
+~~~
+//重命名工厂文件之后需要执行 composer dumpautoload，否则会找不到对应的工厂文件
+composer dumpautoload
+~~~
+factory 工厂文件会使用 faker 来自动生成字段的内容，默认情况下是英文，可以修改成中文：
+config/app.php
+
+~~~
+'faker_locale' => 'zh_CN', // 新增一个配置项
+~~~
 ##用户模块
 ##商品模块
 ##订单模块

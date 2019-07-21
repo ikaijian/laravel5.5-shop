@@ -31,4 +31,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    //关联user_addresses表，一对多关系，一个用户可以有多个地址
+    public function addresses()
+    {
+        return $this->hasMany(UserAddress::class);
+    }
 }

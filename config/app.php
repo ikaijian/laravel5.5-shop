@@ -125,6 +125,9 @@ return [
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
+
+    //修改工厂填充数据文中文
+    'faker_locale' => 'zh_CN', // 新增一个配置项
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
