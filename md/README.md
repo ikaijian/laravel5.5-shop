@@ -346,6 +346,28 @@ config/app.php
 ~~~
 'faker_locale' => 'zh_CN', // 新增一个配置项
 ~~~
+####laravel5.5中文语言包
+
+校验提示文中文配置
+~~~
+composer require overtrue/laravel-lang
+~~~
+修改config/app.php系统语言;原本的值 en 改成 zh-CN
+~~~
+locale' => 'zh-CN',
+~~~
+config/app.php配置Illuminate\Translation\TranslationServiceProvider::class,替换
+~~~
+Overtrue\LaravelLang\TranslationServiceProvider::class,
+~~~
+在bootstrap/app.php添加注册
+~~~
+$app->register(Overtrue\LaravelLang\TranslationServiceProvider::class);
+~~~
+
+
+
+
 ##用户模块
 ##商品模块
 ##订单模块

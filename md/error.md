@@ -10,3 +10,10 @@ cnpm install
 npm run watch-poll
 ~~~
 
+##问题一
+>yarn add china-area-data安装报错
+
+解决
+~~~
+cnpm install china-area-data
+~~~
