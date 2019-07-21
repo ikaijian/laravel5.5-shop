@@ -96,3 +96,9 @@ class CreateProductSkusTable extends Migration
 php artisan make:model Models/Product -mf
 php artisan make:model Models/ProductSku -mf
 ~~~
+
+###后台商品列表
+####创建控制器
+~~~
+php artisan admin:make ProductsController --model=App\Models\Product
+~~~
