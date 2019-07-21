@@ -28,49 +28,49 @@ class UsersController extends Controller
             ->body($this->grid());
     }
 
-//    /**
-//     * Show interface.
-//     *
-//     * @param mixed   $id
-//     * @param Content $content
-//     * @return Content
-//     */
-//    public function show($id, Content $content)
-//    {
-//        return $content
-//            ->header('Detail')
-//            ->description('description')
-//            ->body($this->detail($id));
-//    }
-//
-//    /**
-//     * Edit interface.
-//     *
-//     * @param mixed   $id
-//     * @param Content $content
-//     * @return Content
-//     */
-//    public function edit($id, Content $content)
-//    {
-//        return $content
-//            ->header('Edit')
-//            ->description('description')
-//            ->body($this->form()->edit($id));
-//    }
+    /**
+     * Show interface.
+     *
+     * @param mixed   $id
+     * @param Content $content
+     * @return Content
+     */
+    public function show($id, Content $content)
+    {
+        return $content
+            ->header('详情')
+            ->description('用户详情')
+            ->body($this->detail($id));
+    }
 
-//    /**
-//     * Create interface.
-//     *
-//     * @param Content $content
-//     * @return Content
-//     */
-//    public function create(Content $content)
-//    {
-//        return $content
-//            ->header('Create')
+    /**
+     * Edit interface.
+     *
+     * @param mixed   $id
+     * @param Content $content
+     * @return Content
+     */
+    public function edit($id, Content $content)
+    {
+        return $content
+            ->header('编辑')
 //            ->description('description')
-//            ->body($this->form());
-//    }
+            ->body($this->form()->edit($id));
+    }
+
+    /**
+     * Create interface.
+     *
+     * @param Content $content
+     * @return Content
+     */
+    public function create(Content $content)
+    {
+        return $content
+            ->header('新增')
+//            ->description('description')
+            ->body($this->form());
+    }
 
     /**
      * Make a grid builder.
@@ -124,37 +124,37 @@ class UsersController extends Controller
      * @param mixed   $id
      * @return Show
      */
-//    protected function detail($id)
-//    {
-//        $show = new Show(User::findOrFail($id));
-//
-//        $show->id('Id');
-//        $show->name('Name');
-//        $show->email('Email');
+    protected function detail($id)
+    {
+        $show = new Show(User::findOrFail($id));
+
+        $show->id('ID');
+        $show->name('用户名');
+        $show->email('邮箱');
 //        $show->password('Password');
 //        $show->remember_token('Remember token');
 //        $show->email_verified('Email verified');
-//        $show->created_at('Created at');
-//        $show->updated_at('Updated at');
-//
-//        return $show;
-//    }
-//
-//    /**
-//     * Make a form builder.
-//     *
-//     * @return Form
-//     */
-//    protected function form()
-//    {
-//        $form = new Form(new User);
-//
-//        $form->text('name', 'Name');
-//        $form->email('email', 'Email');
+        $show->created_at('注册时间');
+        $show->updated_at('更新时间');
+
+        return $show;
+    }
+
+    /**
+     * Make a form builder.
+     *
+     * @return Form
+     */
+    protected function form()
+    {
+        $form = new Form(new User);
+
+        $form->text('name', '用户名');
+        $form->email('email', '邮箱');
 //        $form->password('password', 'Password');
-//        $form->text('remember_token', 'Remember token');
+        $form->text('remember_token', 'token');
 //        $form->switch('email_verified', 'Email verified');
-//
-//        return $form;
-//    }
+
+        return $form;
+    }
 }
