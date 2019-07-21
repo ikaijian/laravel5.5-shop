@@ -6,7 +6,12 @@
         <div class="col-lg-10 col-lg-offset-1">
             <div class="panel panel-default">
                 <div class="panel-heading">收货地址列表
-                    <a href="{{ route('user_addresses.create') }}" class="pull-right">新增收货地址</a>
+                    @if(count($addresses))
+                        <a href="{{route('user_addresses.create')}}" class="btn btn-primary btn-sm pull-right">
+                            新增收货地址
+                        </a>
+                    @endif
+                    {{--<a href="{{ route('user_addresses.create') }}" class="pull-right">新增收货地址</a>--}}
                 </div>
                 <div class="panel-body">
                     <table class="table table-bordered table-striped">
@@ -19,7 +24,15 @@
                             <th>操作</th>
                         </tr>
                         </thead>
+
                         <tbody>
+                        @if(!count($addresses))
+                            <tr>
+                                <td class="text-center" colspan="5">
+                                    <a class="btn btn-primary" href="{{route('user_addresses.create')}}">还没有收货地址，请先添加收货地址哦</a>
+                                </td>
+                            </tr>
+                        @endif
                         @foreach($addresses as $address)
                             <tr>
                                 <td>{{ $address->contact_name }}</td>
@@ -71,10 +84,19 @@
                         }
                         // 调用删除接口，用 id 来拼接出请求的 url
                         axios.delete('/user_addresses/' + id)
-                            .then(function () {
+                            .then(function (data) {
+                                swal({
+                                    title:data.data.data.message, //显示后台返回的操作接口
+                                    text:"您已经成功删除当前地址",
+                                    icon:"success"
+                                })
+
+                                .then(function () {
                                 // 请求成功之后重新加载页面
-                                location.reload();
+                                   location.reload();
+                                 })
                             })
+
                     });
             });
         });

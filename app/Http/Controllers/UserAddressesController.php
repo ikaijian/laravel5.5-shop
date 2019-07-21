@@ -12,9 +12,10 @@ class UserAddressesController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index(Request $request)
+    public function index(Request $request,UserAddress $address)
     {
 
+//       $count=$address->where('user_id',auth()->user()->id)->count();
         return view('user_addresses.index', ['addresses' => $request->user()->addresses]);
     }
 
@@ -102,6 +103,6 @@ class UserAddressesController extends Controller
         $this->authorize('own',$user_address);
         $user_address->delete();
 //        return redirect()->route('user_addresses.index');
-        return [];
+        return ['data'=>['message'=>"删除成功",'code'=>200]];
     }
 }
