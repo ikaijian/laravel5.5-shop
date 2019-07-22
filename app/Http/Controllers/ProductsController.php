@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 
 
+
 class ProductsController extends Controller
 {
     /**
@@ -77,15 +78,68 @@ class ProductsController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws InvalidRequestException
      */
-    public function show(Product $product,Request $request)
+    public function show(Product $product, Request $request)
     {
+
         // 判断商品是否已经上架，如果没有上架则抛出异常
         if (!$product->on_sale) {
             throw new InvalidRequestException('商品未上架');
         }
 
-        return view('products.show',['product'=>$product]);
+        //取消收藏
+        $favored = false;
+        // 用户未登录时返回的是 null，已登录时返回的是对应的用户对象
+        if($user = $request->user()) {
+            // 从当前用户已收藏的商品中搜索 id 为当前商品 id 的商品
+            // boolval() 函数用于把值转为布尔值
+            $favored = boolval($user->favoriteProducts()->find($product->id));
+        }
+
+        return view('products.show', ['product' => $product,'favored' => $favored]);
     }
 
 
+    /**
+     * 用户收藏商品的接口
+     * @param Product $product
+     * @param Request $request
+     * @return array
+     */
+    public function favor(Product $product,Request $request)
+    {
+        $user = $request->user();
+
+//        判断当前用户是否已经收藏了此商品
+        if ($user->favoriteProducts()->find($product->id)) {
+            return [];
+        }
+
+//        attach() 方法将当前用户和此商品关联起来
+        //attach() 方法的参数可以是模型的 id，也可以是模型对象本身，因此这里还可以写成 attach($product->id)
+        $user->favoriteProducts()->attach($product);
+
+        return [];
+    }
+
+    /**
+     * 取消收藏的接口
+     * @param Product $product
+     * @param Request $request
+     * @return array
+     */
+    public function disfavor(Product $product, Request $request)
+    {
+        $user = $request->user();
+//        detach() 方法用于取消多对多的关联，接受的参数个数与 attach() 方法一致
+        $user->favoriteProducts()->detach($product);
+
+        return [];
+    }
+
+    public function favorites(Request $request)
+    {
+        $products = $request->user()->favoriteProducts()->paginate(16);
+
+        return view('products.favorites',['products'=>$products]);
+    }
 }

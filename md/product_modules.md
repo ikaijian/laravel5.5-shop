@@ -4,6 +4,8 @@
 + products 表，产品信息表，对应数据模型 Product ；
 + product_skus 表，产品的 SKU 表，对应数据模型 ProductSku
 
++ 用户收藏商品表，是用户表和商品表的中间表：user_favorite_products
+
 ####products 表
 | 字段名称  | 描述 | 类型    | 加索引缘由  |
 |-------|:---:|-----------|-------:|
@@ -91,10 +93,54 @@ class CreateProductSkusTable extends Migration
 }
 
 ~~~
+
+####用户收藏商品表，是用户表和商品表的中间表：user_favorite_products
+| 字段名称  | 描述 | 类型    | 加索引缘由  |
+|-------|:---:|-----------|-------:|
+|id	            | 自增长 ID	| unsigned int	| 主键
+|user_id	        | 所属用户	| id unsigne int	|外键
+|product_id	    | 所属商品    | id	unsigne int	|外键
+
+~~~php
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateUserFavoriteProductsTable extends Migration
+{
+
+    public function up()
+    {
+        Schema::create('user_favorite_products', function (Blueprint $table) {
+            $table->increments('id')->comment('自增ID');
+            $table->unsignedInteger('user_id')->comment('关联用户ID');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedInteger('product_id')->comment('关联商品ID');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('user_favorite_products');
+    }
+}
+
+~~~
+
+
 ###创建模型
 ~~~
 php artisan make:model Models/Product -mf
 php artisan make:model Models/ProductSku -mf
+php artisan make:migration create_user_favorite_products_table --create=user_favorite_products
+~~~
+迁移数据
+~~~
+php artisan migrate
 ~~~
 
 ###后台商品列表

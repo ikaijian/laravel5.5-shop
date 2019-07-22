@@ -56,7 +56,8 @@ body {
   }
 }
 
-.products-index-page {
+//商品列表和收藏列表
+.products-index-page ,.products-favorites-page{
   .products-list {
     padding: 0 15px;
     .product-item {

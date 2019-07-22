@@ -24,9 +24,15 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 //路由组
 Route::group(['middleware'=>'auth'],function (){
+
     Route::get('/email_verify_notice','PagesController@emailVerifyNotice')->name('email_verify_notice');
     Route::get('/email_verification/verify','EmailVerificationController@verify')->name('email_verification.verify');
     Route::get('/email_verification/send','EmailVerificationController@send')->name('email_verification.send');
+
+    //用户收藏商品
+    Route::post('products/{product}/favorite', 'ProductsController@favor')->name('products.favor');
+    //用户取消收藏
+    Route::delete('products/{product}/favorite', 'ProductsController@disfavor')->name('products.disfavor');
 
     //验证邮箱中间件email_verified
     Route::group(['middleware' => 'email_verified'], function() {
@@ -36,6 +42,8 @@ Route::group(['middleware'=>'auth'],function (){
         Route::get('user_addresses/{user_address}', 'UserAddressesController@edit')->name('user_addresses.edit');
         Route::put('user_addresses/{user_address}', 'UserAddressesController@update')->name('user_addresses.update');
         Route::delete('user_addresses/{user_address}', 'UserAddressesController@destroy')->name('user_addresses.destroy');
+        //我的收藏商品列表
+        Route::get('products/favorites', 'ProductsController@favorites')->name('products.favorites');
     });
 });
 

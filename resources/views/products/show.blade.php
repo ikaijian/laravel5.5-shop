@@ -21,9 +21,11 @@
                             <div class="skus">
                                 <label>选择</label>
                                 <div class="btn-group" data-toggle="buttons">
+
                                     @foreach($product->skus as $sku)
+
                                         {{--data-toggle="tooltip" 这个属性来启用 Bootstrap 的工具提示来美化样式--}}
-                                        <label class="btn btn-default sku-btn" title="{{ $sku->description }}"
+                                        <label class="btn btn-default sku-btn {{ $loop->first ? 'active' : '' }}" title="{{ $sku->description }}"
                                                data-price="{{ $sku->price }}" data-stock="{{ $sku->stock }}" data-toggle="tooltip" title="{{ $sku->description }}" data-placement="bottom">
                                             <input type="radio" name="skus" autocomplete="off" value="{{ $sku->id }}"> {{ $sku->title }}
                                         </label>
@@ -32,7 +34,11 @@
                             </div>
                             <div class="cart_amount"><label>数量</label><input type="text" class="form-control input-sm" value="1"><span>件</span><span class="stock"></span></div>
                             <div class="buttons">
-                                <button class="btn btn-success btn-favor">❤ 收藏</button>
+                                @if($favored)
+                                    <button class="btn btn-danger btn-disfavor">取消收藏</button>
+                                @else
+                                    <button class="btn btn-success btn-favor">❤ 收藏</button>
+                                @endif
                                 <button class="btn btn-primary btn-add-to-cart">加入购物车</button>
                             </div>
                         </div>
@@ -59,13 +65,67 @@
 @section('scriptsAfterJs')
     <script>
         $(document).ready(function () {
+
             $('[data-toggle="tooltip"]').tooltip({trigger: 'hover'});
+            $('.product-info .stock').text('库存' + $('.sku-btn').data('stock') + '件');
+            $('.product-info .price span').text($('.sku-btn').data('price'));
+
             $('.sku-btn').click(function () {
 
                 // 监听了 .sku-btn 的点击事件，当用户点击 SKU 时，从对应按钮的 data-* 属性取出价格和库存并输出到对应的 Html 标签中
                 $('.product-info .price span').text($(this).data('price'));
                 $('.product-info .stock').text('库存：' + $(this).data('stock') + '件');
             });
+
+            // 监听收藏按钮的点击事件
+            $('.btn-favor').click(function () {
+                // 发起一个 post ajax 请求，请求 url 通过后端的 route() 函数生成。
+
+                axios.post('{{ route('products.favor', ['product' => $product->id]) }}')
+                    .then(function () { // 请求成功会执行这个回调
+                        swal('操作成功', '', 'success')
+                        // 在 swal() 的回调里调用了 location.reload() 刷新页面来刷新收藏按钮的状态，当用户点击弹出框的 OK 按钮时这个回调会被触发
+                        .then(function () {
+                                location.reload();
+                            });
+                    }, function(error) { // 请求失败会执行这个回调
+                        // debugger
+                        // 如果返回码是 401 代表没登录,在laravel的\Illuminate\Foundation\Exceptions\Handler的这个法方说明
+                        //protected function unauthenticated($request, AuthenticationException $exception)
+                        // {
+                        //     return $request->expectsJson()
+                        //         ? response()->json(['message' => $exception->getMessage()], 401)
+                        // : redirect()->guest(route('login'));
+                        // }
+
+                        if (error.response && error.response.status === 401) {
+                            swal('请先登录', '', 'error')
+                            .then(function() {
+                                    location.href = '{{ route('login') }}';
+                            });
+                        } else if (error.response && error.response.data.msg) {
+                            // 其他有 msg 字段的情况，将 msg 提示给用户
+                            swal(error.response.data.msg, '', 'error');
+                        }  else {
+                            // 其他情况应该是系统挂了
+                            swal('系统错误', '', 'error');
+                        }
+                    });
+            });
+
+
+            //监听取消收藏按钮的点击事件
+            $('.btn-disfavor').click(function () {
+                axios.delete('{{ route('products.disfavor', ['product' => $product->id]) }}')
+                    .then(function () {
+                        swal('操作成功', '', 'success')
+                            .then(function () {
+                                location.reload();
+                            });
+                    });
+            });
+
+
         });
     </script>
 @endsection
