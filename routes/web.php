@@ -44,6 +44,8 @@ Route::group(['middleware'=>'auth'],function (){
         Route::delete('user_addresses/{user_address}', 'UserAddressesController@destroy')->name('user_addresses.destroy');
         //我的收藏商品列表
         Route::get('products/favorites', 'ProductsController@favorites')->name('products.favorites');
+        //添加购物车
+        Route::post('cart', 'CartController@add')->name('cart.add');
     });
 });
 
