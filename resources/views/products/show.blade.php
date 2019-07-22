@@ -136,7 +136,10 @@
                     amount: $('.cart_amount input').val(),
                 })
                     .then(function () { // 请求成功执行此回调
-                        swal('加入购物车成功', '', 'success');
+                        swal('加入购物车成功', '', 'success')
+                        .then(function() {
+                                location.href = '{{ route('cart.index') }}';
+                            });
                     }, function (error) { // 请求失败执行此回调
                         if (error.response.status === 401) {
 
@@ -154,6 +157,18 @@
                             });
                             html += '</div>';
                             swal({content: $(html)[0], icon: 'error'})
+
+                            //jQuery 的方法实现
+                            // let html = '<div>';
+                            // $.each(error.response.data.errors, function(index, value){
+                            //     html += value[0] + '<br/>';
+                            // })
+                            // html+='</div>';
+                            // Swal({
+                            //     type: 'error',
+                            //     title: html,
+                            // })
+
                         } else {
 
                             // 其他情况应该是系统挂了
