@@ -39,5 +39,7 @@ Route::group(['middleware'=>'auth'],function (){
     });
 });
 
+//商品模块路由
 Route::redirect('/', '/products')->name('root');
-Route::get('products', 'ProductsController@index')->name('products.index');
+Route::get('products', 'ProductsController@index')->name('products.index'); //列表
+Route::get('products/{product}', 'ProductsController@show')->name('products.show');//详情
