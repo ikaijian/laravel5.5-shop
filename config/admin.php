@@ -37,7 +37,7 @@ return [
     /*
      * Laravel-Admin 页面标题
      */
-    'title' => 'Admin',
+    'title' => 'ijianjian管理后台',
 
     /*
      * 是否使用 https
@@ -69,7 +69,7 @@ return [
     'upload' => [
 
         // 对应 filesystem.php 中的 disks
-        'disk' => 'admin',
+        'disk' => 'public',
 
         // Image and file upload path under the disk above.
         'directory' => [

@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/','PagesController@root')->name('root');
+//Route::get('/','PagesController@root')->name('root');
 
 Auth::routes();
 
@@ -38,3 +38,6 @@ Route::group(['middleware'=>'auth'],function (){
         Route::delete('user_addresses/{user_address}', 'UserAddressesController@destroy')->name('user_addresses.destroy');
     });
 });
+
+Route::redirect('/', '/products')->name('root');
+Route::get('products', 'ProductsController@index')->name('products.index');

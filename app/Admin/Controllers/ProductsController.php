@@ -188,6 +188,7 @@ class ProductsController extends Controller
             //把用户提交上来的 SKU 数据放到 Collection 中，利用 Collection 提供的 min() 方法求出所有 SKU 中最小的 price，
             //后面的 ?: 0 则是保证当 SKU 数据为空时 price 字段被赋值 0  Form::REMOVE_FLAG_NAME
             $form->model()->price = collect($form->input('skus'))->where(Form::REMOVE_FLAG_NAME, 0)->min('price') ?: 0;
+
         });
 
         return $form;
