@@ -50,7 +50,11 @@ class CartController extends Controller
     {
         //with(['productSku.product']) 方法用来预加载购物车里的商品和 SKU 信息,进行预加载,解决进行预加载
         $cartItems = $request->user()->cartItems()->with('productSku.product')->get();
-        return view('cart.index',['cartItems'=>$cartItems]);
+
+        $addresses = $request->user()->addresses()->orderBy('last_used_at','desc')->get();
+
+
+        return view('cart.index',['cartItems'=>$cartItems,'addresses'=>$addresses]);
     }
 
     public function remove(ProductSku $sku,Request $request)

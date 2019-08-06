@@ -60,6 +60,7 @@ class Order extends Model
         'paid_at',
     ];
 
+    //再写入数据库之前调用，生成no
     protected static function boot()
     {
         parent::boot();
@@ -77,16 +78,25 @@ class Order extends Model
         });
     }
 
+    /**
+     * 关联用户模型
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * 关联orderItem表
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
 
+    //生成订单号
     public static function findAvailableNo()
     {
         // 订单流水号前缀
