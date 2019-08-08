@@ -64,3 +64,12 @@ Route::group(['middleware'=>'auth'],function (){
 Route::redirect('/', '/products')->name('root');
 Route::get('products', 'ProductsController@index')->name('products.index'); //列表
 Route::get('products/{product}', 'ProductsController@show')->name('products.show');//详情
+
+////支付宝测试
+//Route::get('alipay', function() {
+//    return app('alipay')->web([
+//        'out_trade_no' => time(),
+//        'total_amount' => '1',
+//        'subject' => 'test subject - 测试',
+//    ]);
+//});
