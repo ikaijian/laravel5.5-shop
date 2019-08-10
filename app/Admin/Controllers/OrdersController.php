@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\Order;
 use App\Http\Controllers\Controller;
+use Encore\Admin\Admin;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -36,13 +37,22 @@ class OrdersController extends Controller
      * @param Content $content
      * @return Content
      */
-    public function show($id, Content $content)
+    public function show(Order $order,Content $content)
     {
+
         return $content
-            ->header('Detail')
-            ->description('description')
-            ->body($this->detail($id));
+            ->header('查看订单')
+//            ->description('description')
+            ->body(view('admin.orders.show', ['order' => $order]));
     }
+//    public function show(Order $order)
+//    {
+//       return Admin::content(function (Content $content) use($order){
+//           $content->header('查看订单');
+//           // body 方法可以接受 Laravel 的视图作为参数
+//           $content->body('admin.orders.show',['order'=>$order]);
+//       });
+//    }
 
     /**
      * Edit interface.
