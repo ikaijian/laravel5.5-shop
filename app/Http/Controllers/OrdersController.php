@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\OrderReviewed;
 use App\Exceptions\InternalException;
 use App\Exceptions\InvalidRequestException;
 use App\Http\Requests\OrderRequest;
+use App\Http\Requests\SendReviewRequest;
+use App\Jobs\AutoReceive;
 use App\Jobs\CloseOrder;
 use App\Models\Order;
 use App\Models\ProductSku;
@@ -149,7 +152,56 @@ class OrdersController extends Controller
 
         // 返回原页面
 //        return redirect()->back();
+        //调用自动确认收货队列
+        $this->dispatch( new AutoReceive($order,config('app.auto_receive_ttl')));
+
         // 返回订单信息
         return $order;
+    }
+
+    //评价
+    public function review(Order $order)
+    {
+        //校验权限
+        $this->authorize('own',$order);
+
+        //判断是否已经支付
+        if (!$order->paid_at) {
+            throw new  InvalidRequestException('该订单未支付，不可评价');
+        }
+
+        //使用 load 方法加载关联数据，避免 N + 1 性能问题
+
+        return view('orders.review',['order'=>$order->load(['items.productSku','items.product'])]);
+
+    }
+
+    //保存评论
+    public function sendReview(Order $order,SendReviewRequest $request)
+    {
+        //校验权限
+        $this->authorize('own',$order);
+        //判断是否已经支付
+        if (!$order->paid_at) {
+            throw new  InvalidRequestException('该订单未支付，不可评价');
+        }
+
+        $reviews = $request->input('reviews');
+
+        DB::transaction(function () use($reviews,$order){
+            foreach ($reviews as $review){
+                $orderItem = $order->items()->find($review['id']);
+                // 保存评分和评价
+                $orderItem->update([
+                   'rating'=>$review['rating'],
+                   'review'=>$review['review'],
+                   'reviewed_at'=>Carbon::now(),
+                ]);
+            }
+            // 将订单标记为已评价
+            $order->update(['reviewed' => true]);
+            event(new OrderReviewed($order));
+        });
+        return redirect()->back();
     }
 }

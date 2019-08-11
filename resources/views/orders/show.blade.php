@@ -160,17 +160,17 @@
                     dangerMode: true,
                     buttons: ['取消', '确认收到'],
                 })
-                .then(function (ret) {
-                    // 如果点击取消按钮则不做任何操作
-                    if (!ret) {
-                        return;
-                    }
-                    // ajax 提交确认操作
-                    axios.post('{{ route('orders.received', [$order->id]) }}')
-                        .then(function () {
-                            // 刷新页面
-                            location.reload();
-                        })
+                    .then(function (ret) {
+                        // 如果点击取消按钮则不做任何操作
+                        if (!ret) {
+                            return;
+                        }
+                        // ajax 提交确认操作
+                        axios.post('{{ route('orders.received', [$order->id]) }}')
+                            .then(function () {
+                                // 刷新页面
+                                location.reload();
+                            })
                     });
             });
         });

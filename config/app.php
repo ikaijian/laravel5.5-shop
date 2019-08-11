@@ -14,6 +14,10 @@ return [
     */
 
     'order_ttl' => 1800, //延迟不支付订单自动关闭订单有效时间后
+
+    // 30天自动确认收货
+    'auto_receive_ttl' => 2592000,//延迟不支付订单自动确认收货有效时间后
+
     'name' => env('APP_NAME', 'Laravel'),
 
     /*
